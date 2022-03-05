@@ -14,6 +14,18 @@ export const shardStatus = {
 	8: 'Resuming'
 };
 
+export const shardColors = {
+    0: 'green',
+    1: 'yellow',
+    2: 'yellow',
+    3: 'yellow',
+    4: 'yellow',
+    5: 'red',
+    6: 'grey',
+    7: 'grey',
+    8: 'grey'
+}
+
 export const shardNames = {
 	0: 'Wacapev',
 	1: 'Atlas',
@@ -66,7 +78,8 @@ const Home: NextPage = (props: Props & any) => {
 
           const p = document.createElement('p');
           p.id = `shardStatus-${shard.id}`;
-          p.className = styles.green;
+          // @ts-expect-error
+          p.className = styles[shardColors[shard.status]];
           // @ts-expect-error
           p.textContent = shardStatus[shard.status];
 
@@ -99,7 +112,7 @@ const Home: NextPage = (props: Props & any) => {
         // @ts-expect-error
         document.getElementById(`shardGuilds-${shard.id}`)?.textContent = `Guilds: ${shard.guilds}`;
         // @ts-expect-error
-        document.getElementById(`shardStatus-${shard.id}`)?.className = styles.green;
+        document.getElementById(`shardStatus-${shard.id}`)?.className = styles[shardColors[shard.status]];
         // @ts-expect-error
         document.getElementById(`shardStatus-${shard.id}`)?.textContent = shardStatus[shard.status];
       }
@@ -132,7 +145,9 @@ const Home: NextPage = (props: Props & any) => {
             <div className={styles.dropdown} key={shard.id}>
               <div className={styles['shard-info']}>
                       <h3>Shard {shard.id}</h3>
-                      <p id={`shardStatus-${shard.id}`} className={styles.green}>{
+                      <p id={`shardStatus-${shard.id}`} className={
+                        // @ts-expect-error
+                        styles[shardColors[shard.status]]}>{
                       // @ts-expect-error
                       shardStatus[shard.status]}</p>
               </div>
