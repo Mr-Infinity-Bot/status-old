@@ -44,18 +44,7 @@ export interface Props {
   data: Shard[]
 }
 
-export async function getStaticProps() {
-  const res = await fetch(`https://api-infinity.hyrousek.tk/shards/list`);
-  const data = await res.json()
-
-  return {
-    props: {
-      data
-    },
-  }
-}
-
-const Home: NextPage = (props: Props & any) => {
+const Home: NextPage = () => {
   const checkEveryX = () => {
     if (typeof window === 'undefined') return;
     
@@ -140,28 +129,6 @@ const Home: NextPage = (props: Props & any) => {
         </div>
 
         <section>
-          {
-            props.data.map((shard: Shard) =>
-            <div className={styles.dropdown} key={shard.id}>
-              <div className={styles['shard-info']}>
-                      <h3>Shard {shard.id}</h3>
-                      <p id={`shardStatus-${shard.id}`} className={
-                        // @ts-expect-error
-                        styles[shardColors[shard.status]]}>{
-                      // @ts-expect-error
-                      shardStatus[shard.status]}</p>
-              </div>
-
-              <div className={styles['dropdown-content']}>
-                  <a id={`shardName-${shard.id}`}>Name: {
-                  // @ts-expect-error
-                  shardNames[shard.id]}</a>
-                  <a id={`shardPing-${shard.id}`}>Ping: {shard.ping}ms</a>
-                  <a id={`shardGuilds-${shard.id}`}>Guilds: {shard.guilds}</a>
-              </div>
-            </div>
-            )
-          }
         </section>
       </div>
     </div>
