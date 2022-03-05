@@ -45,65 +45,95 @@ export interface Props {
 }
 
 const Home: NextPage = () => {
+  const createShard = (shard: Shard) => {
+    if (document.getElementById(`shardPing-${shard.id}`)) {
+      // @ts-expect-error
+      document.getElementById(`shardPing-${shard.id}`)?.textContent = `Ping: ${shard.ping}ms`;
+      // @ts-expect-error
+      document.getElementById(`shardGuilds-${shard.id}`)?.textContent = `Guilds: ${shard.guilds}`;
+      // @ts-expect-error
+      document.getElementById(`shardStatus-${shard.id}`)?.className = styles[shardColors[shard.status]];
+      // @ts-expect-error
+      document.getElementById(`shardStatus-${shard.id}`)?.textContent = shardStatus[shard.status];
+
+      return;
+    }
+
+    const section = document.getElementsByTagName('section')[0];
+    const dropDir = document.createElement('div');
+    dropDir.className = styles.dropdown;
+
+    const shardInfo = document.createElement('div');
+    shardInfo.className = styles['shard-info'];
+
+    const h3 = document.createElement('h3');
+    h3.textContent = `Shard ${shard.id}`;
+
+    const p = document.createElement('p');
+    p.id = `shardStatus-${shard.id}`;
+    // @ts-expect-error
+    p.className = styles[shardColors[shard.status]];
+    // @ts-expect-error
+    p.textContent = shardStatus[shard.status];
+
+    const dropContentDiv = document.createElement('div');
+    dropContentDiv.className = styles['dropdown-content'];
+    const a1 = document.createElement('a');
+    const a2 = document.createElement('a');
+    const a3 = document.createElement('a');
+    a1.id = `shardName-${shard.id}`;
+    a2.id = `shardPing-${shard.id}`;
+    a3.id = `shardGuilds-${shard.id}`;
+
+    // @ts-expect-error
+    a1.textContent = `Name: ${shardNames[shard.id]}`;
+    a2.textContent = `Ping: ${shard.ping}ms`;
+    a3.textContent = `Guilds: ${shard.guilds}`;
+
+    shardInfo.appendChild(h3);
+    shardInfo.appendChild(p);
+    dropDir.appendChild(shardInfo);
+    dropContentDiv.appendChild(a1);
+    dropContentDiv.appendChild(a2);
+    dropContentDiv.appendChild(a3);
+    dropDir.appendChild(dropContentDiv);
+    section.appendChild(dropDir);
+  }
+
   const checkEveryX = () => {
     if (typeof window === 'undefined') return;
     
     (async() => {
-      const res = await fetch('https://api-infinity.hyrousek.tk/shards/list');
-      const data: Shard[] = await res.json();
+      const res = await fetch('https://api-infinity.hyrousek.tk/shards/list').catch(() => {});
+      const data: Shard[] = await (res as Response)?.json().catch(() => {});
+
+      if (!data?.[0] || !data?.[1] || !data?.[2]) {
+        if (!data?.[0]) createShard({
+          id: 0,
+          status: 5,
+          guilds: 0,
+          ping: 0
+        })
+
+        if (!data?.[1]) createShard({
+          id: 1,
+          status: 5,
+          guilds: 0,
+          ping: 0
+        })
+
+        if (!data?.[2]) createShard({
+          id: 2,
+          status: 5,
+          guilds: 0,
+          ping: 0
+        })
+      }
+
+      if (!data) return;
 
       for (const shard of data) {
-        if (!document.getElementById(`shardPing-${shard.id}`)) {
-          console.log('jos')
-          const section = document.getElementsByTagName('section')[0];
-          const dropDir = document.createElement('div');
-          dropDir.className = styles.dropdown;
-
-          const shardInfo = document.createElement('div');
-          shardInfo.className = styles['shard-info'];
-
-          const h3 = document.createElement('h3');
-          h3.textContent = `Shard ${shard.id}`;
-
-          const p = document.createElement('p');
-          p.id = `shardStatus-${shard.id}`;
-          // @ts-expect-error
-          p.className = styles[shardColors[shard.status]];
-          // @ts-expect-error
-          p.textContent = shardStatus[shard.status];
-
-          const dropContentDiv = document.createElement('div');
-          dropContentDiv.className = styles['dropdown-content'];
-          const a1 = document.createElement('a');
-          const a2 = document.createElement('a');
-          const a3 = document.createElement('a');
-          a1.id = `shardName-${shard.id}`;
-          a2.id = `shardPing-${shard.id}`;
-          a3.id = `shardGuilds-${shard.id}`;
-
-          // @ts-expect-error
-          a1.textContent = `Name: ${shardNames[shard.id]}`;
-          a2.textContent = `Ping: ${shard.ping}ms`;
-          a3.textContent = `Guilds: ${shard.guilds}`;
-
-          shardInfo.appendChild(h3);
-          shardInfo.appendChild(p);
-          dropDir.appendChild(shardInfo);
-          dropContentDiv.appendChild(a1);
-          dropContentDiv.appendChild(a2);
-          dropContentDiv.appendChild(a3);
-          dropDir.appendChild(dropContentDiv);
-          section.appendChild(dropDir);
-          continue;
-        }
-        // @ts-expect-error
-        document.getElementById(`shardPing-${shard.id}`)?.textContent = `Ping: ${shard.ping}ms`;
-        // @ts-expect-error
-        document.getElementById(`shardGuilds-${shard.id}`)?.textContent = `Guilds: ${shard.guilds}`;
-        // @ts-expect-error
-        document.getElementById(`shardStatus-${shard.id}`)?.className = styles[shardColors[shard.status]];
-        // @ts-expect-error
-        document.getElementById(`shardStatus-${shard.id}`)?.textContent = shardStatus[shard.status];
+        createShard(shard);
       }
     })();
 
