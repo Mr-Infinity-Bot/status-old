@@ -122,7 +122,7 @@ const Home: NextPage = (props: Props & any) => {
       <div className={styles['yellow-line']}><p>Yellow Line</p></div> 
       <div className='center'>
         <div className={styles['top-text']}>
-          <h1>Mr. Infinity's Status</h1>
+          <h1>Mr. Infinity&apos;s Status</h1>
           <p>Check bot status.</p>
         </div>
 
