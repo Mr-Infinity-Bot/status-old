@@ -32,7 +32,7 @@ export interface Props {
   data: Shard[]
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   const res = await fetch(`https://api-infinity.hyrousek.tk/shards/list`);
   const data = await res.json()
 
@@ -52,6 +52,48 @@ const Home: NextPage = (props: Props & any) => {
       const data: Shard[] = await res.json();
 
       for (const shard of data) {
+        if (!document.getElementById(`shardPing-${shard.id}`)) {
+          console.log('jos')
+          const section = document.getElementsByTagName('section')[0];
+          const dropDir = document.createElement('div');
+          dropDir.className = styles.dropdown;
+
+          const shardInfo = document.createElement('div');
+          shardInfo.className = styles['shard-info'];
+
+          const h3 = document.createElement('h3');
+          h3.textContent = `Shard ${shard.id}`;
+
+          const p = document.createElement('p');
+          p.id = `shardStatus-${shard.id}`;
+          p.className = styles.green;
+          // @ts-expect-error
+          p.textContent = shardStatus[shard.status];
+
+          const dropContentDiv = document.createElement('div');
+          dropContentDiv.className = styles['dropdown-content'];
+          const a1 = document.createElement('a');
+          const a2 = document.createElement('a');
+          const a3 = document.createElement('a');
+          a1.id = `shardName-${shard.id}`;
+          a2.id = `shardPing-${shard.id}`;
+          a3.id = `shardGuilds-${shard.id}`;
+
+          // @ts-expect-error
+          a1.textContent = `Name: ${shardNames[shard.id]}`;
+          a2.textContent = `Ping: ${shard.ping}ms`;
+          a3.textContent = `Guilds: ${shard.guilds}`;
+
+          shardInfo.appendChild(h3);
+          shardInfo.appendChild(p);
+          dropDir.appendChild(shardInfo);
+          dropContentDiv.appendChild(a1);
+          dropContentDiv.appendChild(a2);
+          dropContentDiv.appendChild(a3);
+          dropDir.appendChild(dropContentDiv);
+          section.appendChild(dropDir);
+          continue;
+        }
         // @ts-expect-error
         document.getElementById(`shardPing-${shard.id}`)?.textContent = `Ping: ${shard.ping}ms`;
         // @ts-expect-error
